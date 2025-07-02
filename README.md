@@ -1,0 +1,1 @@
+A real time chat aaplication with various features where friends can meet and interact with each other and enjoy the time together.

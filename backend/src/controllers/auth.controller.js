@@ -110,3 +110,58 @@ export function logout(req,res){
     res.clearCookie("jwt");
     res.status(200).json({success:true, message:"Logout Successful"});
 }
+
+export async function onboard(req,res,next){
+    try {
+        const userId = req.user._id;
+
+        const {fullname, bio, nativeLanguage, learningLanguage, location} = req.body;
+
+        if(!fullname || !bio || !nativeLanguage || !learningLanguage || !location){
+            return res.status(400).json({
+                message: "All fields are required.",
+                missingFields:[
+                    !fullname && "fullname",
+                    !bio && "bio",
+                    !nativeLanguage && "nativelanguage",
+                    !learningLanguage && "Learninglanguage",
+                    !location && "location"
+                ].filter(Boolean)
+            });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                ...req.body,
+                isOnBoarded: true
+            },
+            {new : true}
+        );
+
+        if(!updatedUser){
+            return res.status(404).json({
+                message: "User not found in onboard function."
+            });
+        }
+
+        try {
+            await upsertStreamUser({
+                id:updatedUser._id.toString(),
+                name: updatedUser.fullname,
+                image: updatedUser.profilePic || "",
+            });
+            console.log(`Stream user updated after onbaording for ${updatedUser.fullname}`);
+        } catch (error) {
+            console.log("Error in the stream onboarding.",error);
+        }
+
+        res.status(200).json({success : true, user : updatedUser});
+
+    } catch (error) {
+        console.log("Error in onboarding the user.");
+        res.status(500).json({
+            message : "Internal server Error."
+        })
+    }
+}

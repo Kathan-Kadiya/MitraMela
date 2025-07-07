@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import {ShipWheelIcon} from "lucide-react";
 import { Link } from 'react-router';
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {signup} from '../lib/api.js';
 
 const SignUpPage = () => {
 
@@ -11,18 +13,15 @@ const SignUpPage = () => {
   });
 
   // This is how we did it at first, without using our custom hook
-  // const queryClient = useQueryClient();
-  // const {
-  //   mutate: signupMutation,
-  //   isPending,
-  //   error,
-  // } = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
+  const queryClient = useQueryClient();
+  const {mutate: signupMutation,isPending,error,} = useMutation({
+    mutationFn: signup,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+  });
 
   const handleSignUp = (e) => {
     e.preventDefault();
+    signupMutation(signupData);
   }
 
   return (
@@ -42,6 +41,12 @@ const SignUpPage = () => {
               MitraMela
             </span>
           </div>
+
+          {error && (
+            <div className="alert alert-error mb-4">
+            <span>{error.response.data.message}</span>
+            </div>
+          )}
 
           <div className="w-full">
             <form onSubmit={handleSignUp}>
@@ -66,7 +71,7 @@ const SignUpPage = () => {
                       placeholder="Your Fullname"
                       className="input input-bordered w-full"
                       value={signupData.fullname}
-                      onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
+                      onChange={(e) => setSignupData({ ...signupData, fullname: e.target.value })}
                       required
                     />
                   </div>
@@ -117,7 +122,7 @@ const SignUpPage = () => {
                 </div>
 
                 <button className="btn btn-primary w-full" type="submit">
-                    Create Account
+                    {isPending ? "Signing up...":"Create Account"}
                 </button>
 
                 <div className="text-center mt-4">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes,Route } from 'react-router';
+import { Routes,Route, Navigate } from 'react-router';
 import HomePage from "./Pages/HomePage.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import SignUpPage from "./Pages/SignUpPage.jsx";
@@ -11,32 +11,31 @@ import axiosInstance from './lib/axios.js';
 
 import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
+import { getAuthUser } from './lib/api.js';
+import useAuthUser from './hooks/useAuthUser.js';
 
 const App = () => {
 
-  const {data:authData, isLoading, error} = useQuery({
-    queryKey: ["authUser"],
-                            // this is just to learn the useQuery and axios will modify it later
-    queryFn: async () => {
-      const res = await axiosInstance.get("/auth/me");
-      return res.data;
-    },
-    retry: false,
-  })
+  const {isLoading, authUser} = useAuthUser();
 
-  console.log(authData);
+  const isAuthenticated = Boolean(authUser);
+  const isOnboarded = authUser?.isOnBoarded;
 
   return (
     <div className='h-screen' data-theme='night'>
       
       <Routes>
-        <Route path='/' element={<HomePage/>}/>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/signup' element={<SignUpPage/>}/>
+        <Route path='/' element={isAuthenticated && isOnboarded ? 
+        (<HomePage />) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)
+          }/>
+        <Route path='/login' element={<LoginPage/>} />
+        <Route path='/signup' element={!authUser ? <SignUpPage/> : <Navigate to="/"/>}/>
         <Route path='/notifications' element={<NotificationsPage/>}/>
         <Route path='/call' element={<CallPage/>}/>
         <Route path='/chat' element={<ChatPage/>}/>
-        <Route path='/onboarding' element={<OnboardingPage/>}/>
+        <Route path='/onboarding' element={ 
+          isAuthenticated ? ( !isOnboarded ? ( <OnboardingPage /> ) : ( <Navigate to="/" /> )) : ( <Navigate to="/login" /> )
+            }/>
       </Routes>
 
       <Toaster/>

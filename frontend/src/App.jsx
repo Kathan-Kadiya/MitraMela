@@ -13,22 +13,29 @@ import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { getAuthUser } from './lib/api.js';
 import useAuthUser from './hooks/useAuthUser.js';
+import Layout from './components/Layout.jsx';
+import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
 
   const {isLoading, authUser} = useAuthUser();
+  const { theme } = useThemeStore();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnBoarded;
 
   return (
-    <div className='h-screen' data-theme='night'>
+    <div className='h-screen' data-theme={theme}>
       
       <Routes>
         <Route path='/' element={isAuthenticated && isOnboarded ? 
-        (<HomePage />) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)
+        (
+          <Layout showSidebar={true}>
+                <HomePage />
+              </Layout>
+        ) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)
           }/>
-        <Route path='/login' element={<LoginPage/>} />
+        <Route path='/login' element={!isAuthenticated ? <LoginPage /> : <Navigate to={isOnboarded ? "/" : "/onboarding"} />} />
         <Route path='/signup' element={!authUser ? <SignUpPage/> : <Navigate to="/"/>}/>
         <Route path='/notifications' element={<NotificationsPage/>}/>
         <Route path='/call' element={<CallPage/>}/>

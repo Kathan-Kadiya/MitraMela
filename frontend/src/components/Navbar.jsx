@@ -28,7 +28,7 @@ const { mutate: logoutMutation } = useMutation({
                 <Link to="/" className="flex items-center gap-2.5">
                     <ShipWheelIcon className="size-9 text-primary" />
                     <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-                    Streamify
+                    MitraMela
                     </span>
                 </Link>
                 </div>
@@ -47,7 +47,9 @@ const { mutate: logoutMutation } = useMutation({
 
             <div className="avatar">
                 <div className="w-9 rounded-full">
-                <img src={authUser?.profilePic} alt="User Avatar" rel="noreferrer" />
+                    <Link to={"/"}>
+                        <img src={authUser?.profilePic} alt="User Avatar" rel="noreferrer" />
+                    </Link>
                 </div>
             </div>
 

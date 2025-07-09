@@ -10,7 +10,7 @@ export async function getRecommendedUsers(req,res){
         const recommendedusers = await User.find({
             $and:[
                 {_id: {$ne : currentUserId} }, // exclude current user
-                {$id: {$nin : currentUser.friends}}, // exclude existing friends
+                {_id: {$nin : currentUser.friends}}, // exclude existing friends
                 {isOnBoarded : true}
             ],
         });
@@ -101,11 +101,11 @@ export async function acceptFriendRequest(req, res) {
         // add each user to the other's friends array
         // $addToSet: adds elements to an array only if they do not already exist.
         await User.findByIdAndUpdate(friendRequest.sender, {
-        $addToSet: { friends: friendRequest.recipient },
+            $addToSet: { friends: friendRequest.recipient },
         });
 
         await User.findByIdAndUpdate(friendRequest.recipient, {
-        $addToSet: { friends: friendRequest.sender },
+            $addToSet: { friends: friendRequest.sender },
         });
 
         res.status(200).json({ message: "Friend request accepted" });

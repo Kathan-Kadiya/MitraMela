@@ -15,6 +15,7 @@ import { getAuthUser } from './lib/api.js';
 import useAuthUser from './hooks/useAuthUser.js';
 import Layout from './components/Layout.jsx';
 import { useThemeStore } from "./store/useThemeStore.js";
+import PageLoader from './components/PageLoader.jsx';
 
 const App = () => {
 
@@ -23,6 +24,8 @@ const App = () => {
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnBoarded;
+
+  if (isLoading) return <PageLoader />;
 
   return (
     <div className='h-screen' data-theme={theme}>
@@ -45,8 +48,13 @@ const App = () => {
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
             )}/>
-        <Route path='/call' element={<CallPage/>}/>
-        <Route path='/chat' element={<ChatPage/>}/>
+        <Route path='/call/:id' element={<CallPage/>}/>
+        <Route path='/chat/:id' element={
+          isAuthenticated && isOnboarded ? (
+              <ChatPage />
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )}/>
         <Route path='/onboarding' element={ 
           isAuthenticated ? ( !isOnboarded ? ( <OnboardingPage /> ) : ( <Navigate to="/" /> )) : ( <Navigate to="/login" /> )
             }/>

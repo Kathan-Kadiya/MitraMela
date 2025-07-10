@@ -1,0 +1,21 @@
+{
+  "name": "mitramela",
+  "version": "1.0.0",
+  "description": "A real time chat application with various features where people around the world can meet and interact with each other and enjoy the time together.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kathan-Kadiya/MitraMela.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kathan-Kadiya/MitraMela/issues"
+  },
+  "homepage": "https://github.com/Kathan-Kadiya/MitraMela#readme"
+}

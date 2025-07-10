@@ -16,6 +16,7 @@ import useAuthUser from './hooks/useAuthUser.js';
 import Layout from './components/Layout.jsx';
 import { useThemeStore } from "./store/useThemeStore.js";
 import PageLoader from './components/PageLoader.jsx';
+import FriendsPage from './Pages/FriendsPage.jsx';
 
 const App = () => {
 
@@ -35,6 +36,13 @@ const App = () => {
         (
           <Layout showSidebar={true}>
                 <HomePage />
+              </Layout>
+        ) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)
+          }/>
+        <Route path='/friends' element={isAuthenticated && isOnboarded ? 
+        (
+          <Layout showSidebar={true}>
+                <FriendsPage />
               </Layout>
         ) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)
           }/>
